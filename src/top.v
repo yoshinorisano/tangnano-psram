@@ -4,7 +4,8 @@ module top(
     output [2:0] led,
     output          psram_ce_n,
     output          psram_clk,
-    output [3:0]    psram_sio
+    output [3:0]    psram_sio,
+    input           psram_in
 );
     assign led[0] = 1'b1; // G
     assign led[1] = led_b; // B
@@ -37,6 +38,7 @@ module top(
         .sys_reset_n(sys_reset_n),
         .ce_n(psram_ce_n),
         .clk(psram_clk),
-        .sio(psram_sio)
+        .sio(psram_sio),
+        .in(psram_in)
     );
 endmodule
