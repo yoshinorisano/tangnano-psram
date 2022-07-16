@@ -45,8 +45,8 @@ module psram(
                 8'd2: output_delimiter(8'd3, 1'd0);
                 8'd3: output_byte(8'd4, 8'h99); // Reset
                 8'd4: output_delimiter(8'd5, 1'd1);
-                8'd5: output_delimiter(8'd6, 1'd0);
-                8'd6: begin
+                //8'd5: output_delimiter(8'd6, 1'd0);
+                8'd5: begin
                     sm_state_main <= 8'd1;
                 end
             endcase
