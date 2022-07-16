@@ -26,8 +26,14 @@ module top(
         end
     end
 
+    reg clk_half = 0;
+
+    always @(posedge sys_clk) begin
+        clk_half <= !clk_half;
+    end
+
     psram psram_inst(
-        .sys_clk(sys_clk),
+        .sys_clk(clk_half),
         .sys_reset_n(sys_reset_n),
         .ce_n(psram_ce_n),
         .clk(psram_clk),
