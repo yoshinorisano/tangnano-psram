@@ -31,8 +31,9 @@ module psram(
         end else begin
             case (sm_state_main)
                 8'd0: psram_reset();
-                8'd1: psram_write(24'hff00ff, 8'hab);
-                8'd2: begin
+                8'd1: psram_write(24'h70f0fe, 8'h66);
+                8'd2: psram_read(24'h70f0fe);
+                8'd3: begin
                     // Do nothing
                 end
             endcase
@@ -86,9 +87,31 @@ module psram(
                 8'd2: output_byte_exact(8'd3, address[15: 8]);
                 8'd3: output_byte_exact(8'd4, address[7: 0]);
                 8'd4: output_byte_exact(8'd5, data);
-                8'd5: begin
+                8'd5: output_delimiter(8'd6, 1'd1);
+                8'd6: begin
                     sm_state_command <= 8'd0;
                     sm_state_main <= 8'd2;
+                end
+            endcase
+        end
+    endtask
+
+    task psram_read;
+        input [23:0] address;
+        begin
+            // Command State Machine
+            case (sm_state_command)
+                8'd0: output_byte_exact(8'd1, 8'h03); // Read Command
+                8'd1: output_byte_exact(8'd2, address[23: 16]);
+                8'd2: output_byte_exact(8'd3, address[15: 8]);
+                8'd3: output_byte_exact(8'd4, address[7: 0]);
+                8'd4: noop(8'd5);
+                8'd5: noop(8'd6);
+                8'd6: noop(8'd7);
+                8'd7: noop(8'd8);
+                8'd8: begin
+                    sm_state_command <= 8'd0;
+                    sm_state_main <= 8'd3;
                 end
             endcase
         end
