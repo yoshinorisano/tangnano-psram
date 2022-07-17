@@ -52,10 +52,30 @@ module psram(
                 8'd6: output_byte_ce_n_active(8'd7, 8'hff);
                 8'd7: output_byte_ce_n_active(8'd8, 8'hff);
                 8'd8: output_byte_ce_n_active(8'd9, 8'hff);
-                8'd9: begin
+                8'd9: noop(8'd10);
+                8'd10: noop(8'd11);
+                8'd11: noop(8'd12);
+                8'd12: noop(8'd13);
+
+                8'd13: noop(8'd14);
+                8'd14: noop(8'd15);
+                8'd15: noop(8'd16);
+                8'd16: noop(8'd17);
+
+                8'd17: noop(8'd18);
+                8'd18: noop(8'd19);
+                8'd19: output_delimiter(8'd20, 1'd1);
+                8'd20: begin
                     sm_state_main <= 8'd1;
                 end
             endcase
+        end
+    endtask
+
+    task noop;
+        input [7:0] next_state;
+        begin
+            sm_state_command <= next_state;
         end
     endtask
 
