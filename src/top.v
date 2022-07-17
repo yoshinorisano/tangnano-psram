@@ -16,6 +16,7 @@ module top(
 
     reg led_b = 0;
 
+    // Generate slower clock and periodical reset signal.
     always @(posedge sys_clk) begin
         if (counter <= 32'd27_000_000) begin
             counter <= counter + 1'd1;
