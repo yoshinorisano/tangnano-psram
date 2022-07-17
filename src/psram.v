@@ -45,14 +45,14 @@ module psram(
         begin
             // Command State Machine
             case (sm_state_command)
-                8'd0: output_byte_exact(8'd1, 8'h66); // Reset Enable
+                8'd0: output_byte(8'd1, 8'h66); // Reset Enable
                 8'd1: output_delimiter(8'd3, 1'd1);
-                8'd3: output_byte_exact(8'd4, 8'h99); // Reset
+                8'd3: output_byte(8'd4, 8'h99); // Reset
                 8'd4: output_delimiter(8'd5, 1'd1);
-                8'd5: output_byte_exact(8'd6, 8'h9f); // Read ID
-                8'd6: output_byte_exact(8'd7, 8'hff);
-                8'd7: output_byte_exact(8'd8, 8'hff);
-                8'd8: output_byte_exact(8'd9, 8'hff);
+                8'd5: output_byte(8'd6, 8'h9f); // Read ID
+                8'd6: output_byte(8'd7, 8'hff);
+                8'd7: output_byte(8'd8, 8'hff);
+                8'd8: output_byte(8'd9, 8'hff);
                 8'd9: noop(8'd10);
                 8'd10: noop(8'd11);
                 8'd11: noop(8'd12);
@@ -89,11 +89,11 @@ module psram(
             // Command State Machine
             case (sm_state_command)
                 //8'd0: output_delimiter(8'd1, 1'd0);
-                8'd0: output_byte_exact(8'd1, 8'h02); // Write Command
-                8'd1: output_byte_exact(8'd2, address[23: 16]);
-                8'd2: output_byte_exact(8'd3, address[15: 8]);
-                8'd3: output_byte_exact(8'd4, address[7: 0]);
-                8'd4: output_byte_exact(8'd5, data);
+                8'd0: output_byte(8'd1, 8'h02); // Write Command
+                8'd1: output_byte(8'd2, address[23: 16]);
+                8'd2: output_byte(8'd3, address[15: 8]);
+                8'd3: output_byte(8'd4, address[7: 0]);
+                8'd4: output_byte(8'd5, data);
                 8'd5: output_delimiter(8'd6, 1'd1);
                 8'd6: begin
                     sm_state_command <= 8'd0;
@@ -109,10 +109,10 @@ module psram(
         begin
             // Command State Machine
             case (sm_state_command)
-                8'd0: output_byte_exact(8'd1, 8'h03); // Read Command
-                8'd1: output_byte_exact(8'd2, address[23: 16]);
-                8'd2: output_byte_exact(8'd3, address[15: 8]);
-                8'd3: output_byte_exact(8'd4, address[7: 0]);
+                8'd0: output_byte(8'd1, 8'h03); // Read Command
+                8'd1: output_byte(8'd2, address[23: 16]);
+                8'd2: output_byte(8'd3, address[15: 8]);
+                8'd3: output_byte(8'd4, address[7: 0]);
                 8'd4: noop(8'd5);
                 8'd5: noop(8'd6);
                 8'd6: noop(8'd7);
@@ -132,7 +132,7 @@ module psram(
         end
     endtask
 
-    task output_byte_exact;
+    task output_byte;
         input [7:0] next_state;
         input [7:0] output_data;
 
