@@ -19,7 +19,7 @@ module psram(
     reg [7:0] sm_state_output_byte;
 
     // Main State Machine
-    always @(posedge sys_clk or negedge sys_reset_n) begin
+    always @(negedge sys_clk or negedge sys_reset_n) begin
         if (!sys_reset_n) begin
             ce_n <= 1'b1;
             sio[0] <= 1'b0;
