@@ -45,16 +45,14 @@ module psram(
         begin
             // Command State Machine
             case (sm_state_command)
-                8'd0: output_byte(8'd3, 8'h66); // Reset Enable
-                //8'd1: output_delimiter(8'd2, 1'd1);
-                //8'd2: output_delimiter(8'd3, 1'd0);
-                8'd3: output_byte(8'd5, 8'h99); // Reset
-                //8'd4: output_delimiter(8'd5, 1'd1);
-                //8'd5: output_delimiter(8'd6, 1'd0);
-                8'd5: output_byte_ce_n_active(8'd6, 8'h9f); // Read ID
-                8'd6: output_byte_ce_n_active(8'd7, 8'hff);
-                8'd7: output_byte_ce_n_active(8'd8, 8'hff);
-                8'd8: output_byte_ce_n_active(8'd9, 8'hff);
+                8'd0: output_byte_exact(8'd1, 8'h66); // Reset Enable
+                8'd1: output_delimiter(8'd3, 1'd1);
+                8'd3: output_byte_exact(8'd4, 8'h99); // Reset
+                8'd4: output_delimiter(8'd5, 1'd1);
+                8'd5: output_byte_exact(8'd6, 8'h9f); // Read ID
+                8'd6: output_byte_exact(8'd7, 8'hff);
+                8'd7: output_byte_exact(8'd8, 8'hff);
+                8'd8: output_byte_exact(8'd9, 8'hff);
                 8'd9: noop(8'd10);
                 8'd10: noop(8'd11);
                 8'd11: noop(8'd12);
@@ -67,8 +65,15 @@ module psram(
 
                 8'd17: noop(8'd18);
                 8'd18: noop(8'd19);
-                8'd19: output_delimiter(8'd20, 1'd1);
-                8'd20: begin
+                8'd19: noop(8'd20);
+                8'd20: noop(8'd21);
+                8'd21: noop(8'd22);
+                8'd22: noop(8'd23);
+                8'd23: noop(8'd24);
+                8'd24: noop(8'd25);
+                8'd25: noop(8'd26);
+                8'd26: output_delimiter(8'd27, 1'd1);
+                8'd27: begin
                     sm_state_command <= 8'd0;
                     sm_state_main <= next_state;
                 end
@@ -124,114 +129,6 @@ module psram(
         input [7:0] next_state;
         begin
             sm_state_command <= next_state;
-        end
-    endtask
-
-    task output_byte;
-        input [7:0] next_state;
-        input [7:0] output_data;
-
-        begin
-            // Output Byte State Machine
-            case (sm_state_output_byte)
-                8'd0: begin
-                    //ce_n <= 1'b0;
-                    sm_state_output_byte <= 8'd1;
-                end
-                8'd1: begin
-                    ce_n <= 1'b0;
-                    sio[0] <= output_data[7];
-                    sm_state_output_byte <= 8'd2;
-                end
-                8'd2: begin
-                    sio[0] <= output_data[6];
-                    sm_state_output_byte <= 8'd3;
-                end
-                8'd3: begin
-                    sio[0] <= output_data[5];
-                    sm_state_output_byte <= 8'd4;
-                end
-                8'd4: begin
-                    sio[0] <= output_data[4];
-                    sm_state_output_byte <= 8'd5;
-                end
-                8'd5: begin
-                    sio[0] <= output_data[3];
-                    sm_state_output_byte <= 8'd6;
-                end
-                8'd6: begin
-                    sio[0] <= output_data[2];
-                    sm_state_output_byte <= 8'd7;
-                end
-                8'd7: begin
-                    sio[0] <= output_data[1];
-                    sm_state_output_byte <= 8'd8;
-                end
-                8'd8: begin
-                    sio[0] <= output_data[0];
-                    sm_state_output_byte <= 8'd9;
-                    //ce_n <= 1'b1;
-                end
-                8'd9: begin
-                    sm_state_command <= next_state;
-                    sm_state_output_byte <= 8'd0;
-                    ce_n <= 1'b1;
-                end
-            endcase
-        end
-    endtask
-
-    task output_byte_ce_n_active;
-        input [7:0] next_state;
-        input [7:0] output_data;
-
-        begin
-            // Output Byte State Machine
-            case (sm_state_output_byte)
-                8'd0: begin
-                    //ce_n <= 1'b0;
-                    sm_state_output_byte <= 8'd1;
-                end
-                8'd1: begin
-                    ce_n <= 1'b0;
-                    sio[0] <= output_data[7];
-                    sm_state_output_byte <= 8'd2;
-                end
-                8'd2: begin
-                    sio[0] <= output_data[6];
-                    sm_state_output_byte <= 8'd3;
-                end
-                8'd3: begin
-                    sio[0] <= output_data[5];
-                    sm_state_output_byte <= 8'd4;
-                end
-                8'd4: begin
-                    sio[0] <= output_data[4];
-                    sm_state_output_byte <= 8'd5;
-                end
-                8'd5: begin
-                    sio[0] <= output_data[3];
-                    sm_state_output_byte <= 8'd6;
-                end
-                8'd6: begin
-                    sio[0] <= output_data[2];
-                    sm_state_output_byte <= 8'd7;
-                end
-                8'd7: begin
-                    sio[0] <= output_data[1];
-                    sm_state_output_byte <= 8'd8;
-                end
-                8'd8: begin
-                    sio[0] <= output_data[0];
-                    sm_state_output_byte <= 8'd9;
-                    //ce_n <= 1'b1;
-                end
-                8'd9: begin
-                    sm_state_command <= next_state;
-                    sm_state_output_byte <= 8'd0;
-                    //ce_n <= 1'b1;
-                end
-            endcase
         end
     endtask
 
