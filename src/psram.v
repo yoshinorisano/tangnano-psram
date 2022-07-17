@@ -6,12 +6,6 @@ module psram(
     output reg [3:0] sio,
     input in
 );
-    reg ce_n_next;
-    always @(posedge sys_clk) begin
-        ce_n_next <= ce_n;
-    end
-
-    //assign clk = !ce_n_next & sys_clk;
     assign clk = !ce_n & sys_clk;
 
     reg [7:0] sm_state_main;
@@ -88,7 +82,6 @@ module psram(
         begin
             // Command State Machine
             case (sm_state_command)
-                //8'd0: output_delimiter(8'd1, 1'd0);
                 8'd0: output_byte(8'd1, 8'h02); // Write Command
                 8'd1: output_byte(8'd2, address[23: 16]);
                 8'd2: output_byte(8'd3, address[15: 8]);
