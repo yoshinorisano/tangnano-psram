@@ -1,3 +1,6 @@
+// I used the original code of TangNano example and modify it:
+// https://github.com/sipeed/Tang-Nano-examples/blob/master/nano/src/LCD_PSRAM.v
+
 module psram(
     input sys_clk,
     input sys_reset_n,
