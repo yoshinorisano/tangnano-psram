@@ -31,7 +31,8 @@ module psram(
         end else begin
             case (sm_state_main)
                 8'd0: psram_reset();
-                8'd1: begin
+                8'd1: psram_write(24'hff00ff, 8'hab);
+                8'd2: begin
                     // Do nothing
                 end
             endcase
@@ -66,7 +67,28 @@ module psram(
                 8'd18: noop(8'd19);
                 8'd19: output_delimiter(8'd20, 1'd1);
                 8'd20: begin
+                    sm_state_command <= 8'd0;
                     sm_state_main <= 8'd1;
+                end
+            endcase
+        end
+    endtask
+
+    task psram_write;
+        input [23:0] address;
+        input [7:0] data;
+        begin
+            // Command State Machine
+            case (sm_state_command)
+                //8'd0: output_delimiter(8'd1, 1'd0);
+                8'd0: output_byte_exact(8'd1, 8'h02); // Write Command
+                8'd1: output_byte_exact(8'd2, address[23: 16]);
+                8'd2: output_byte_exact(8'd3, address[15: 8]);
+                8'd3: output_byte_exact(8'd4, address[7: 0]);
+                8'd4: output_byte_exact(8'd5, data);
+                8'd5: begin
+                    sm_state_command <= 8'd0;
+                    sm_state_main <= 8'd2;
                 end
             endcase
         end
@@ -182,6 +204,51 @@ module psram(
                     sm_state_command <= next_state;
                     sm_state_output_byte <= 8'd0;
                     //ce_n <= 1'b1;
+                end
+            endcase
+        end
+    endtask
+
+    task output_byte_exact;
+        input [7:0] next_state;
+        input [7:0] output_data;
+
+        begin
+            // Output Byte State Machine
+            case (sm_state_output_byte)
+                8'd0: begin
+                    ce_n <= 1'b0; // TODO: Fix timing issue.
+                    sio[0] <= output_data[7];
+                    sm_state_output_byte <= 8'd1;
+                end
+                8'd1: begin
+                    sio[0] <= output_data[6];
+                    sm_state_output_byte <= 8'd2;
+                end
+                8'd2: begin
+                    sio[0] <= output_data[5];
+                    sm_state_output_byte <= 8'd3;
+                end
+                8'd3: begin
+                    sio[0] <= output_data[4];
+                    sm_state_output_byte <= 8'd4;
+                end
+                8'd4: begin
+                    sio[0] <= output_data[3];
+                    sm_state_output_byte <= 8'd5;
+                end
+                8'd5: begin
+                    sio[0] <= output_data[2];
+                    sm_state_output_byte <= 8'd6;
+                end
+                8'd6: begin
+                    sio[0] <= output_data[1];
+                    sm_state_output_byte <= 8'd7;
+                end
+                8'd7: begin
+                    sio[0] <= output_data[0];
+                    sm_state_command <= next_state;
+                    sm_state_output_byte <= 8'd0;
                 end
             endcase
         end
