@@ -30,9 +30,9 @@ module psram(
             sm_state_output_byte <= 8'd0;
         end else begin
             case (sm_state_main)
-                8'd0: psram_reset();
-                8'd1: psram_write(24'h70f0fe, 8'h66);
-                8'd2: psram_read(24'h70f0fe);
+                8'd0: psram_reset(8'd1);
+                8'd1: psram_write(8'd2, 24'h70f0fe, 8'h66);
+                8'd2: psram_read(8'd3, 24'h70f0fe);
                 8'd3: begin
                     // Do nothing
                 end
@@ -41,6 +41,7 @@ module psram(
     end
 
     task psram_reset;
+        input [7:0] next_state;
         begin
             // Command State Machine
             case (sm_state_command)
@@ -69,13 +70,14 @@ module psram(
                 8'd19: output_delimiter(8'd20, 1'd1);
                 8'd20: begin
                     sm_state_command <= 8'd0;
-                    sm_state_main <= 8'd1;
+                    sm_state_main <= next_state;
                 end
             endcase
         end
     endtask
 
     task psram_write;
+        input [7:0] next_state;
         input [23:0] address;
         input [7:0] data;
         begin
@@ -90,13 +92,14 @@ module psram(
                 8'd5: output_delimiter(8'd6, 1'd1);
                 8'd6: begin
                     sm_state_command <= 8'd0;
-                    sm_state_main <= 8'd2;
+                    sm_state_main <= next_state;
                 end
             endcase
         end
     endtask
 
     task psram_read;
+        input [7:0] next_state;
         input [23:0] address;
         begin
             // Command State Machine
@@ -111,7 +114,7 @@ module psram(
                 8'd7: noop(8'd8);
                 8'd8: begin
                     sm_state_command <= 8'd0;
-                    sm_state_main <= 8'd3;
+                    sm_state_main <= next_state;
                 end
             endcase
         end
